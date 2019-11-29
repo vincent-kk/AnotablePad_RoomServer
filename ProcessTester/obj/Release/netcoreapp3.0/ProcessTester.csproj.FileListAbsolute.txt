@@ -1,0 +1,11 @@
+C:\Users\Lunox\Source\repos\ProcessTester\ProcessTester\bin\Release\netcoreapp3.0\ProcessTester.exe
+C:\Users\Lunox\Source\repos\ProcessTester\ProcessTester\bin\Release\netcoreapp3.0\ProcessTester.deps.json
+C:\Users\Lunox\Source\repos\ProcessTester\ProcessTester\bin\Release\netcoreapp3.0\ProcessTester.runtimeconfig.json
+C:\Users\Lunox\Source\repos\ProcessTester\ProcessTester\bin\Release\netcoreapp3.0\ProcessTester.runtimeconfig.dev.json
+C:\Users\Lunox\Source\repos\ProcessTester\ProcessTester\bin\Release\netcoreapp3.0\ProcessTester.dll
+C:\Users\Lunox\Source\repos\ProcessTester\ProcessTester\bin\Release\netcoreapp3.0\ProcessTester.pdb
+C:\Users\Lunox\Source\repos\ProcessTester\ProcessTester\obj\Release\netcoreapp3.0\ProcessTester.AssemblyInfoInputs.cache
+C:\Users\Lunox\Source\repos\ProcessTester\ProcessTester\obj\Release\netcoreapp3.0\ProcessTester.AssemblyInfo.cs
+C:\Users\Lunox\Source\repos\ProcessTester\ProcessTester\obj\Release\netcoreapp3.0\ProcessTester.dll
+C:\Users\Lunox\Source\repos\ProcessTester\ProcessTester\obj\Release\netcoreapp3.0\ProcessTester.pdb
+C:\Users\Lunox\Source\repos\ProcessTester\ProcessTester\obj\Release\netcoreapp3.0\ProcessTester.csprojAssemblyReference.cache
