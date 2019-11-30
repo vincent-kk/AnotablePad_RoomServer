@@ -8,25 +8,26 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading;
 
-namespace ProcessTester
+namespace RoomServer
 {
     class Program
     {
         static void Main(string[] args)
         {
-            
+
             string pipeName;
-            TcpListener tcpListener = null;
+            TcpListenerManager listenerManager = null;
             Socket host = null;
             Socket tablet = null;
 
             ClientHandler cHandler = null;
             Thread clientThread = null;
+            Thread observerThread = null;
 
             string port;
 
             byte[] buffer = new byte[128];
-            
+
             if (args.Length == 1)
             {
                 pipeName = args[0];
@@ -37,9 +38,10 @@ namespace ProcessTester
                 Console.WriteLine("Argument is invalied");
                 foreach (var arg in args)
                     Console.WriteLine(arg);
+                Environment.Exit(0);
                 return;
             }
-            
+
             NamedPipeClientStream pipe = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut);
             // Connect to the pipe or wait until the pipe is available.
             Console.WriteLine("Attempting to connect to Name Server...");
@@ -48,28 +50,25 @@ namespace ProcessTester
 
             var ss = new StreamString(pipe);
             // Validate the server's signature string.
-            if (ss.ReadString() == "I am the one true server!") //>>1
+            if (ss.ReadString() == "@NameServer:StartRoom") //>>1
             {
-            
                 // Print the file to the screen.
+
                 port = ss.ReadString(); //>>4
-                
+
                 Console.WriteLine(port);
                 try
                 {
-                    tcpListener = new TcpListener(IPAddress.Any, Int32.Parse(port));
+                    listenerManager = new TcpListenerManager(port);
 
-                    tcpListener.Start();
+                    listenerManager.TcpListener.Start();
 
-                    Console.WriteLine("MuliThread Starting :Waiting for connections...");
+                    Console.WriteLine("MuliThread Starting : Waiting for connections...");
 
                     while (true)
                     {
-
-                        Socket temp = tcpListener.AcceptSocket();
-
+                        Socket temp = listenerManager.TcpListener.AcceptSocket();
                         int recvSize = temp.Receive(buffer, buffer.Length, SocketFlags.None);
-
                         if (recvSize > 0)
                         {
                             string message = Encoding.UTF8.GetString(buffer, 0, recvSize);
@@ -98,7 +97,6 @@ namespace ProcessTester
                             temp.Send(buffer, buffer.Length, SocketFlags.None);
                             continue;
                         }
-
                         if (host == null || tablet == null)
                             continue;
                         else
@@ -109,35 +107,57 @@ namespace ProcessTester
                                 clientThread = new Thread(new ThreadStart(cHandler.runDrawing));
                                 clientThread.Start();
                                 ss.WriteString("$RoomServer:Started");
+
+                                var observer = new ThreadObserver(clientThread, listenerManager);
+                                observerThread = new Thread(new ThreadStart(observer.runObserving));
+                                observerThread.Start();
                             }
                             else
                             {
                                 cHandler.GuestEnter(temp);
                             }
                         }
-
                     }
+                }
+                catch (SocketException exp)
+                {
+                    Console.WriteLine("Drawing Thread is Join");
                 }
                 catch (Exception exp)
                 {
-                    Console.WriteLine("Exception :" + exp);
+                    Console.WriteLine("Exception : " + exp.Message);
                 }
                 finally
                 {
-                    if(tcpListener != null)
-                        tcpListener.Stop();
+                    if (listenerManager.IsListening)
+                        listenerManager.TcpListener.Stop();
+                    observerThread.Join();
                 }
+                Console.WriteLine("$RoomServer:Closed");
+                Environment.Exit(0);
             }
             else
             {
                 Console.WriteLine("Server could not be verified.");
             }
-
             pipe.Close();
+            Environment.Exit(0);
         }
     }
 }
 
+public class TcpListenerManager
+{
+    private bool isListening;
+    private TcpListener tcpListener;
+    public bool IsListening { get => isListening; set => isListening = value; }
+    public TcpListener TcpListener { get => tcpListener; set => tcpListener = value; }
+    public TcpListenerManager(string port)
+    {
+        TcpListener = new TcpListener(IPAddress.Any, Int32.Parse(port));
+        IsListening = true;
+    }
+}
 
 /*
 public class PipeClient

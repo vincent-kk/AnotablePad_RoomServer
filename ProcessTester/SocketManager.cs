@@ -38,8 +38,6 @@ class SocketManager
 
     public bool StartSocket(Socket socket)
     {
-        Console.WriteLine("ClientSocket Connected");
-
         try
         {
             this.socket = socket;

@@ -54,10 +54,39 @@ public class ClientHandler
                 clearBuffer(buffer, recvSize);
             }     
             Thread.Sleep(5);
+
+            connection = hostSocket.IsConnected() && tabletSocket.IsConnected();
         }
 
-        Console.WriteLine("Socket Disconnection");
-        
+        if (tabletSocket.IsConnected())
+        {
+            buffer = Encoding.UTF8.GetBytes("@ROOMCLOSED");
+            tabletSocket.Send(buffer, buffer.Length);
+            Thread.Sleep(100);
+            tabletSocket.Disconnect();
+        }
+
+        if (hostSocket.IsConnected())
+        {
+            buffer = Encoding.UTF8.GetBytes("@ROOMCLOSED");
+            hostSocket.Send(buffer, buffer.Length);
+            Thread.Sleep(100);
+            hostSocket.Disconnect();
+        }
+
+        foreach(var guest in guests)
+        {
+            if (guest.IsConnected())
+            {
+                buffer = Encoding.UTF8.GetBytes("@ROOMCLOSED");
+                guest.Send(buffer, buffer.Length);
+                Thread.Sleep(100);
+                guest.Disconnect();
+            }
+        }
+
+        Console.WriteLine("Host or Tablet is Disconnection...");
+        Console.WriteLine("Close Room Server...");
     }
 
     public void GuestEnter(Socket guest)
