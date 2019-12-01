@@ -25,7 +25,7 @@ public class ClientHandler
 
         guests = new List<SocketManager>();
     }
-    public void runDrawing()
+    public void RunDrawing()
     {
         SocketManager hostSocket = new SocketManager();
         SocketManager tabletSocket = new SocketManager();
@@ -44,7 +44,7 @@ public class ClientHandler
                 //string message = Encoding.UTF8.GetString(buffer, 0, recvSize);
                 //analizeMessage(message);
                 hostSocket.Send(buffer, recvSize);
-                if(guests.Count > 0)
+                if (guests.Count > 0)
                 {
                     foreach (var guest in guests)
                     {
@@ -52,7 +52,7 @@ public class ClientHandler
                     }
                 }
                 clearBuffer(buffer, recvSize);
-            }     
+            }
             Thread.Sleep(5);
 
             connection = hostSocket.IsConnected() && tabletSocket.IsConnected();
@@ -74,7 +74,7 @@ public class ClientHandler
             hostSocket.Disconnect();
         }
 
-        foreach(var guest in guests)
+        foreach (var guest in guests)
         {
             if (guest.IsConnected())
             {

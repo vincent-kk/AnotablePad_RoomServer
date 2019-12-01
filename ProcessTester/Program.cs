@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using System.Net;
 using System.Net.Sockets;
-using System.Security.Principal;
 using System.Text;
 using System.Threading;
 
@@ -104,7 +102,7 @@ namespace RoomServer
                             if (clientThread == null)
                             {
                                 cHandler = new ClientHandler(host, tablet);
-                                clientThread = new Thread(new ThreadStart(cHandler.runDrawing));
+                                clientThread = new Thread(new ThreadStart(cHandler.RunDrawing));
                                 clientThread.Start();
                                 ss.WriteString("$RoomServer:Started");
 
