@@ -16,7 +16,6 @@ class ThreadObserver
     }
     public void runObserving()
     {
-        Console.WriteLine("Start Observing");
         Thread.Join();
         listener.TcpListener.Stop();
     }

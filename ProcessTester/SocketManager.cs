@@ -18,15 +18,13 @@ class SocketManager
 
     private bool isConnected = false;
 
-    private bool isTablet = false;
-
     private static int BUFFERSIZE = 1024;
 
     // 델리게이트 쓰는법을 알아보자
     public delegate void EventHandler(NetEventState state);
 
     private EventHandler handler;
-
+    public bool IsConnected { get => isConnected; }
 
     public SocketManager()
     {
@@ -116,12 +114,10 @@ class SocketManager
     // 스레드 측 송수신 처리.
     public void Dispatch()
     {
-        Console.WriteLine("Dispatch dispatchThread started.");
-
         while (dispatchThreadLoop)
         {
             // 클라이언트와의 송수신 처리를 합니다.
-            if (socket != null && isConnected == true)
+            if (socket != null && IsConnected == true)
             {
                 DispatchReceive();
                 DispatchSend();
@@ -165,18 +161,9 @@ class SocketManager
             while (socket.Poll(0, SelectMode.SelectRead))
             {
                 byte[] buffer = new byte[BUFFERSIZE];
-
                 int recvSize = socket.Receive(buffer, buffer.Length, SocketFlags.None);
-                if (recvSize == 0)
-                {
-                    // 끊기.
-                    Console.WriteLine("Disconnect recv from client.");
-                    Disconnect();
-                }
-                else if (recvSize > 0)
-                {
-                    receiveQueue.Enqueue(buffer, recvSize);
-                }
+                if (recvSize == 0) Disconnect();
+                else if (recvSize > 0) receiveQueue.Enqueue(buffer, recvSize);
             }
         }
         catch
@@ -195,13 +182,6 @@ class SocketManager
     {
         this.handler -= handler;
     }
-
-    // 접속 확인.
-    public bool IsConnected()
-    {
-        return isConnected;
-    }
-
 
     public Thread GetThread()
     {

@@ -21,15 +21,15 @@ namespace RoomServer
             ClientHandler cHandler = null;
             Thread clientThread = null;
             Thread observerThread = null;
-
+            string RoomName;
             string port;
 
             byte[] buffer = new byte[128];
 
-            if (args.Length == 1)
+            if (args.Length == 2)
             {
-                pipeName = args[0];
-                Console.WriteLine("Pipe Name is {0}", pipeName);
+                RoomName = args[0];
+                pipeName = args[1];
             }
             else
             {
@@ -44,25 +44,18 @@ namespace RoomServer
             // Connect to the pipe or wait until the pipe is available.
             Console.WriteLine("Attempting to connect to Name Server...");
             pipe.Connect();
-            Console.WriteLine("Connected to Name Server.");
+            Console.WriteLine("Connected to Name Server with pipe : " + pipeName);
 
             var ss = new StreamString(pipe);
             // Validate the server's signature string.
             if (ss.ReadString() == "@NameServer:StartRoom") //>>1
             {
-                // Print the file to the screen.
-
                 port = ss.ReadString(); //>>4
 
-                Console.WriteLine(port);
                 try
                 {
                     listenerManager = new TcpListenerManager(port);
-
                     listenerManager.TcpListener.Start();
-
-                    Console.WriteLine("MuliThread Starting : Waiting for connections...");
-
                     while (true)
                     {
                         Socket temp = listenerManager.TcpListener.AcceptSocket();
@@ -76,16 +69,15 @@ namespace RoomServer
                                 if (tok == "") continue;
                                 if (tok.Contains("@"))
                                 {
-                                    if (tok == "@Host-PC")
+                                    if (tok == "@Host")
                                     {
                                         host = temp;
-                                        Console.WriteLine("Host PC Connection");
                                     }
                                     else if (tok == "@Tablet")
                                     {
                                         tablet = temp;
-                                        Console.WriteLine("Tablet Connection");
                                     }
+                                    else if (tok == "@Guest") ;
                                 }
                             }
                         }
@@ -101,7 +93,7 @@ namespace RoomServer
                         {
                             if (clientThread == null)
                             {
-                                cHandler = new ClientHandler(host, tablet);
+                                cHandler = new ClientHandler(host, tablet, RoomName);
                                 clientThread = new Thread(new ThreadStart(cHandler.RunDrawing));
                                 clientThread.Start();
                                 ss.WriteString("$RoomServer:Started");
@@ -117,7 +109,7 @@ namespace RoomServer
                         }
                     }
                 }
-                catch (SocketException exp)
+                catch (SocketException)
                 {
                     Console.WriteLine("Drawing Thread is Join");
                 }
@@ -157,101 +149,6 @@ public class TcpListenerManager
     }
 }
 
-/*
-public class PipeClient
-{
-    private static int numClients = 1;
-
-    public static void Main(string[] args)
-    {
-        if (args.Length > 0)
-        {
-            if (args[0] == "spawnclient")
-            {
-                var pipeClient =
-                    new NamedPipeClientStream(".", "testpipe",
-                        PipeDirection.InOut, PipeOptions.None,
-                        TokenImpersonationLevel.Impersonation);
-
-                Console.WriteLine("Connecting to server...\n");
-                pipeClient.Connect();
-
-                var ss = new StreamString(pipeClient);
-                // Validate the server's signature string.
-                if (ss.ReadString() == "I am the one true server!")
-                {
-                    // The client security token is sent with the first write.
-                    // Send the name of the file whose contents are returned
-                    // by the server.
-                    ss.WriteString("d:\\textfile.txt");
-
-                    // Print the file to the screen.
-                    Console.Write(ss.ReadString());
-                }
-                else
-                {
-                    Console.WriteLine("Server could not be verified.");
-                }
-                pipeClient.Close();
-                // Give the client process some time to display results before exiting.
-                Thread.Sleep(4000);
-            }
-        }
-        else
-        {
-            Console.WriteLine("\n*** Named pipe client stream with impersonation example ***\n");
-            StartClients();
-        }
-    }
-
-    // Helper function to create pipe client processes
-    private static void StartClients()
-    {
-        string currentProcessName = Environment.CommandLine;
-        currentProcessName = Path.ChangeExtension(currentProcessName, ".exe");
-        Process[] plist = new Process[numClients];
-
-        Console.WriteLine("Spawning client processes...\n");
-
-        if (currentProcessName.Contains(Environment.CurrentDirectory))
-        {
-            currentProcessName = currentProcessName.Replace(Environment.CurrentDirectory, String.Empty);
-        }
-
-        // Remove extra characters when launched from Visual Studio
-        currentProcessName = currentProcessName.Replace("\\", String.Empty);
-        currentProcessName = currentProcessName.Replace("\"", String.Empty);
-
-        int i;
-        for (i = 0; i < numClients; i++)
-        {
-            // Start 'this' program but spawn a named pipe client.
-            plist[i] = Process.Start(currentProcessName, "spawnclient");
-        }
-        while (i > 0)
-        {
-            for (int j = 0; j < numClients; j++)
-            {
-                if (plist[j] != null)
-                {
-                    if (plist[j].HasExited)
-                    {
-                        Console.WriteLine($"Client process[{plist[j].Id}] has exited.");
-                        plist[j] = null;
-                        i--;    // decrement the process watch count
-                    }
-                    else
-                    {
-                        Thread.Sleep(250);
-                    }
-                }
-            }
-        }
-        Console.WriteLine("\nClient processes finished, exiting.");
-    }
-}
-*/
-// Defines the data protocol for reading and writing strings on our stream.
 public class StreamString
 {
     private Stream ioStream;
