@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Lunox\\Source\\repos\\ProcessTester\\ProcessTester\\AnotablePad_RoomServer.csproj",
+      "projectUniqueName": "C:\\Users\\Lunox\\Source\\repos\\AnotablePad_RoomServer\\AnotablePad_RoomServer\\AnotablePad_RoomServer.csproj",
       "projectName": "AnotablePad_RoomServer",
-      "projectPath": "C:\\Users\\Lunox\\Source\\repos\\ProcessTester\\ProcessTester\\AnotablePad_RoomServer.csproj",
+      "projectPath": "C:\\Users\\Lunox\\Source\\repos\\AnotablePad_RoomServer\\AnotablePad_RoomServer\\AnotablePad_RoomServer.csproj",
       "packagesPath": "C:\\Users\\Lunox\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Lunox\\Source\\repos\\ProcessTester\\ProcessTester\\obj\\",
+      "outputPath": "C:\\Users\\Lunox\\Source\\repos\\AnotablePad_RoomServer\\AnotablePad_RoomServer\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
