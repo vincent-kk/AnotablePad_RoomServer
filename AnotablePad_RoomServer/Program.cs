@@ -66,15 +66,15 @@ namespace RoomServer
                                 if (tok == "") continue;
                                 if (tok.Contains("@"))
                                 {
-                                    if (tok == "@Host")
+                                    if (tok == AppData.ServerCommand+"Host")
                                     {
                                         host = temp;
                                     }
-                                    else if (tok == "@Tablet")
+                                    else if (tok == AppData.ServerCommand + "Tablet")
                                     {
                                         tablet = temp;
                                     }
-                                    else if (tok == "@Guest") { }
+                                    else if (tok == AppData.ServerCommand + "Guest") { }
                                 }
                             }
                         }

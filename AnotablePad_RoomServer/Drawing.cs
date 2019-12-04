@@ -18,7 +18,7 @@ public class ClientHandler
         tablet = _tablet;
         name = _name;
         buffer = new byte[1024];
-        var temp = Encoding.UTF8.GetBytes("@CONNECTION");
+        var temp = Encoding.UTF8.GetBytes(CommendBook.Connection);
         host.Send(temp, temp.Length, SocketFlags.None);
         tablet.Send(temp, temp.Length, SocketFlags.None);
 
@@ -57,7 +57,7 @@ public class ClientHandler
 
         if (tabletSocket.IsConnected)
         {
-            buffer = Encoding.UTF8.GetBytes("@ROOMCLOSED");
+            buffer = Encoding.UTF8.GetBytes(CommendBook.ROOM_CLOSED);
             tabletSocket.Send(buffer, buffer.Length);
             Thread.Sleep(100);
             tabletSocket.Disconnect();
@@ -65,7 +65,7 @@ public class ClientHandler
 
         if (hostSocket.IsConnected)
         {
-            buffer = Encoding.UTF8.GetBytes("@ROOMCLOSED");
+            buffer = Encoding.UTF8.GetBytes(CommendBook.ROOM_CLOSED);
             hostSocket.Send(buffer, buffer.Length);
             Thread.Sleep(100);
             hostSocket.Disconnect();
@@ -75,7 +75,7 @@ public class ClientHandler
         {
             if (guest.IsConnected)
             {
-                buffer = Encoding.UTF8.GetBytes("@ROOMCLOSED");
+                buffer = Encoding.UTF8.GetBytes(CommendBook.ROOM_CLOSED);
                 guest.Send(buffer, buffer.Length);
                 Thread.Sleep(100);
                 guest.Disconnect();
@@ -88,7 +88,7 @@ public class ClientHandler
     {
         var sock = new SocketManager();
         sock.StartSocket(guest);
-        var temp = Encoding.UTF8.GetBytes("@CONNECTION");
+        var temp = Encoding.UTF8.GetBytes(CommendBook.Connection);
         sock.Send(temp, temp.Length);
         guests.Add(sock);
     }
