@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.IO.Pipes;
 using System.Net;
 using System.Net.Sockets;
@@ -12,7 +11,6 @@ namespace RoomServer
     {
         static void Main(string[] args)
         {
-
             string pipeName;
             TcpListenerManager listenerManager = null;
             Socket host = null;
@@ -51,7 +49,6 @@ namespace RoomServer
             if (ss.ReadString() == "@NameServer:StartRoom") //>>1
             {
                 port = ss.ReadString(); //>>4
-
                 try
                 {
                     listenerManager = new TcpListenerManager(port);
@@ -77,7 +74,7 @@ namespace RoomServer
                                     {
                                         tablet = temp;
                                     }
-                                    else if (tok == "@Guest") ;
+                                    else if (tok == "@Guest") { }
                                 }
                             }
                         }
@@ -87,6 +84,7 @@ namespace RoomServer
                             temp.Send(buffer, buffer.Length, SocketFlags.None);
                             continue;
                         }
+
                         if (host == null || tablet == null)
                             continue;
                         else
@@ -96,7 +94,7 @@ namespace RoomServer
                                 cHandler = new ClientHandler(host, tablet, RoomName);
                                 clientThread = new Thread(new ThreadStart(cHandler.RunDrawing));
                                 clientThread.Start();
-                                ss.WriteString("$RoomServer:Started");
+                                ss.WriteString("$RoomServer-" + RoomName + ":Started");
 
                                 var observer = new ThreadObserver(clientThread, listenerManager);
                                 observerThread = new Thread(new ThreadStart(observer.runObserving));
@@ -111,7 +109,7 @@ namespace RoomServer
                 }
                 catch (SocketException)
                 {
-                    Console.WriteLine("Drawing Thread is Join");
+                    Console.WriteLine(RoomName+" Drawing Thread Join");
                 }
                 catch (Exception exp)
                 {
@@ -123,7 +121,7 @@ namespace RoomServer
                         listenerManager.TcpListener.Stop();
                     observerThread.Join();
                 }
-                Console.WriteLine("$RoomServer:Closed");
+                Console.WriteLine("$RoomServer-" + RoomName + ":Closed");
                 Environment.Exit(0);
             }
             else
@@ -146,62 +144,5 @@ public class TcpListenerManager
     {
         TcpListener = new TcpListener(IPAddress.Any, Int32.Parse(port));
         IsListening = true;
-    }
-}
-
-public class StreamString
-{
-    private Stream ioStream;
-    private UTF8Encoding streamEncoding;
-
-    public StreamString(Stream ioStream)
-    {
-        this.ioStream = ioStream;
-        streamEncoding = new UTF8Encoding();
-    }
-
-    public string ReadString()
-    {
-        int len;
-        len = ioStream.ReadByte() * 256;
-        len += ioStream.ReadByte();
-        var inBuffer = new byte[len];
-        ioStream.Read(inBuffer, 0, len);
-
-        return streamEncoding.GetString(inBuffer);
-    }
-
-    public int WriteString(string outString)
-    {
-        byte[] outBuffer = streamEncoding.GetBytes(outString);
-        int len = outBuffer.Length;
-        if (len > UInt16.MaxValue)
-        {
-            len = (int)UInt16.MaxValue;
-        }
-        ioStream.WriteByte((byte)(len / 256));
-        ioStream.WriteByte((byte)(len & 255));
-        ioStream.Write(outBuffer, 0, len);
-        ioStream.Flush();
-
-        return outBuffer.Length + 2;
-    }
-
-    public int WriteByte(byte[] outString)
-    {
-        byte[] outBuffer = outString;
-        int len = outBuffer.Length;
-        ioStream.Write(outBuffer, 0, len);
-        ioStream.Flush();
-        return len;
-    }
-
-    public byte[] ReadByte()
-    {
-        int len = 0;
-        len = ioStream.ReadByte();
-        byte[] inBuffer = new byte[len];
-        ioStream.Read(inBuffer, 0, len);
-        return inBuffer;
     }
 }

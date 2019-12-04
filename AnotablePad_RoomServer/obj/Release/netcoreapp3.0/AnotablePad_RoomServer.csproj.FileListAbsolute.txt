@@ -26,7 +26,6 @@ C:\Users\Lunox\VisualStudioProjects\AnotablePad_RoomServer\AnotablePad_RoomServe
 C:\Users\Lunox\VisualStudioProjects\AnotablePad_RoomServer\AnotablePad_RoomServer\bin\Release\netcoreapp3.0\AnotablePad_RoomServer.runtimeconfig.dev.json
 C:\Users\Lunox\VisualStudioProjects\AnotablePad_RoomServer\AnotablePad_RoomServer\bin\Release\netcoreapp3.0\AnotablePad_RoomServer.dll
 C:\Users\Lunox\VisualStudioProjects\AnotablePad_RoomServer\AnotablePad_RoomServer\bin\Release\netcoreapp3.0\AnotablePad_RoomServer.pdb
-C:\Users\Lunox\VisualStudioProjects\AnotablePad_RoomServer\AnotablePad_RoomServer\obj\Release\netcoreapp3.0\AnotablePad_RoomServer.csprojAssemblyReference.cache
 C:\Users\Lunox\VisualStudioProjects\AnotablePad_RoomServer\AnotablePad_RoomServer\obj\Release\netcoreapp3.0\AnotablePad_RoomServer.AssemblyInfoInputs.cache
 C:\Users\Lunox\VisualStudioProjects\AnotablePad_RoomServer\AnotablePad_RoomServer\obj\Release\netcoreapp3.0\AnotablePad_RoomServer.AssemblyInfo.cs
 C:\Users\Lunox\VisualStudioProjects\AnotablePad_RoomServer\AnotablePad_RoomServer\obj\Release\netcoreapp3.0\AnotablePad_RoomServer.dll
