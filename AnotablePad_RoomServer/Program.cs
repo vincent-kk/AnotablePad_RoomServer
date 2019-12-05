@@ -46,7 +46,7 @@ namespace RoomServer
 
             var ss = new StreamString(pipe);
             // Validate the server's signature string.
-            if (ss.ReadString() == "@NameServer:StartRoom") //>>1
+            if (ss.ReadString() == "NameServer::StartRoom") //>>1
             {
                 port = ss.ReadString(); //>>4
                 try
@@ -94,7 +94,6 @@ namespace RoomServer
                                 cHandler = new ClientHandler(host, tablet, RoomName);
                                 clientThread = new Thread(new ThreadStart(cHandler.RunDrawing));
                                 clientThread.Start();
-                                ss.WriteString("$RoomServer-" + RoomName + ":Started");
 
                                 var observer = new ThreadObserver(clientThread, listenerManager);
                                 observerThread = new Thread(new ThreadStart(observer.runObserving));
