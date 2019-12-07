@@ -76,8 +76,6 @@ public class ClientHandler
         else if (hostSocket.IsConnected) hostSocket.Disconnect();
         foreach (var guest in guests)
             if (guest.IsConnected) guest.Disconnect();
-
-        Console.WriteLine("Close " + name + " Server...");
     }
 
     /// <summary>

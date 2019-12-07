@@ -128,7 +128,7 @@ namespace RoomServer
                         listenerManager.StopListening();
                     observerThread.Join();
                 }
-                Console.WriteLine("$RoomServer::" + RoomName + "=> Closed");
+                Console.WriteLine("$RoomServer::" + RoomName + " => Closed");
                 Environment.Exit(0);
             }
             else
