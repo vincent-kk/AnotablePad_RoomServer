@@ -50,7 +50,6 @@ public class ClientHandler
             if (recvSize > 0)
             {
                 hostSocket.Send(buffer, recvSize);
-
                 for (int i = 0; i < guests.Count; i++)
                 {
                     if (guests[i].IsConnected) guests[i].Send(buffer, recvSize);

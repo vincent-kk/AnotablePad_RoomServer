@@ -15,6 +15,8 @@ class SocketManager
 
     protected Thread dispatchThread = null;
 
+    private Thread _garbagecollector;
+
     private bool isConnected = false;
 
     private static int BUFFERSIZE = 1024;
@@ -46,8 +48,16 @@ class SocketManager
             Console.WriteLine("Socket Fail");
             return false;
         }
-
+        _garbagecollector = new Thread(new ThreadStart(Observing));
         return LaunchDispatchThread();
+    }
+    private void Observing()
+    {
+        while (true)
+        {
+            if (dispatchThread != null) dispatchThread.Join();
+            else Thread.Sleep(1000);
+        }
     }
 
     /// <summary>
@@ -83,7 +93,7 @@ class SocketManager
     public void Disconnect()
     {
         isConnected = false;
-
+        dispatchThreadLoop = false;
         if (socket != null)
         {
             socket.Shutdown(SocketShutdown.Both);
