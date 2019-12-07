@@ -55,32 +55,19 @@ public class ClientHandler
             connection = hostSocket.IsConnected && tabletSocket.IsConnected;
         }
 
-        if (tabletSocket.IsConnected)
-        {
-            buffer = Encoding.UTF8.GetBytes(CommendBook.ROOM_CLOSED);
-            tabletSocket.Send(buffer, buffer.Length);
-            Thread.Sleep(100);
-            tabletSocket.Disconnect();
-        }
-
-        if (hostSocket.IsConnected)
-        {
-            buffer = Encoding.UTF8.GetBytes(CommendBook.ROOM_CLOSED);
-            hostSocket.Send(buffer, buffer.Length);
-            Thread.Sleep(100);
-            hostSocket.Disconnect();
-        }
-
+        buffer = Encoding.UTF8.GetBytes(CommendBook.ROOM_CLOSED);
+        if (tabletSocket.IsConnected) tabletSocket.Send(buffer, buffer.Length);
+        else if (hostSocket.IsConnected) hostSocket.Send(buffer, buffer.Length);
         foreach (var guest in guests)
-        {
-            if (guest.IsConnected)
-            {
-                buffer = Encoding.UTF8.GetBytes(CommendBook.ROOM_CLOSED);
-                guest.Send(buffer, buffer.Length);
-                Thread.Sleep(100);
-                guest.Disconnect();
-            }
-        }
+            if (guest.IsConnected) guest.Send(buffer, buffer.Length);
+
+        Thread.Sleep(100);
+
+        if (tabletSocket.IsConnected) tabletSocket.Disconnect();
+        else if (hostSocket.IsConnected) hostSocket.Disconnect();
+        foreach (var guest in guests)
+            if (guest.IsConnected) guest.Disconnect();
+
         Console.WriteLine("Close " + name + " Server...");
     }
 
