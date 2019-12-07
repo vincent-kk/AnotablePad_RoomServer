@@ -12,6 +12,12 @@ public class ClientHandler
     private byte[] buffer;
     private string name;
     private bool connection;
+    private readonly int RoomCapacity = 4;
+
+    /// <summary>
+    /// 최초 생성시에 Host PC와 Tablet, 그리고 방의 이름을 입력받는다.
+    /// 생성됨과 동시에 두 host에게 접속 성공을 통지한다.
+    /// </summary>
     public ClientHandler(Socket _host, Socket _tablet, string _name)
     {
         host = _host;
@@ -21,9 +27,12 @@ public class ClientHandler
         var temp = Encoding.UTF8.GetBytes(CommendBook.Connection);
         host.Send(temp, temp.Length, SocketFlags.None);
         tablet.Send(temp, temp.Length, SocketFlags.None);
-
         guests = new List<SocketManager>();
     }
+    /// <summary>
+    /// Thraed로 실행되는 부분. Tablet의 데이터를 받아서 host와 각 guest에게 뿌린다.
+    /// 두 host 중 하나의 접속이 종료되면 루프를 탈출하며 잔류한 모든 인원에게 접속 종료를 통지한다.
+    /// </summary>
     public void RunDrawing()
     {
         SocketManager hostSocket = new SocketManager();
@@ -71,6 +80,9 @@ public class ClientHandler
         Console.WriteLine("Close " + name + " Server...");
     }
 
+    /// <summary>
+    /// Guest 추가시 접속 성공을 통지하고 List에 추가한다. 
+    /// </summary>
     public void GuestEnter(Socket guest)
     {
         var sock = new SocketManager();
@@ -78,6 +90,13 @@ public class ClientHandler
         var temp = Encoding.UTF8.GetBytes(CommendBook.Connection);
         sock.Send(temp, temp.Length);
         guests.Add(sock);
+    }
+    /// <summary>
+    /// 현재 잔류하는 Guest의 수를 채크하여 수용 가능량을 초과하면 받지 않는다.
+    /// </summary>
+    public bool GuestEnterRequest()
+    {
+        return (guests.Count < RoomCapacity);
     }
 
     private void clearBuffer(byte[] buffer, int size)

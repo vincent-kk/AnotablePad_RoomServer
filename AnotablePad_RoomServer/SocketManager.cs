@@ -21,6 +21,7 @@ class SocketManager
     public delegate void EventHandler(NetEventState state);
 
     private EventHandler handler;
+
     public bool IsConnected { get => isConnected; }
 
     public SocketManager()
@@ -29,6 +30,9 @@ class SocketManager
         receiveQueue = new PacketQueue();
     }
 
+    /// <summary>
+    /// SocketManager에 사용할 소켓을 할당하고 DispatchThread를 동작시킴.
+    /// </summary>
     public bool StartSocket(Socket socket)
     {
         try
@@ -45,10 +49,9 @@ class SocketManager
         return LaunchDispatchThread();
     }
 
-
-    /*
-     * summery : 송신 요청시 송신큐에 단순 추가. 이후 매 Dispatch 마다 실제 송신 
-     */
+    /// <summary>
+    /// 송신 요청시 송신큐에 단순 추가. 이후 매 Dispatch 마다 실제 송신 
+    /// </summary>
     public int Send(byte[] data, int size)
     {
         if (sendQueue == null)
@@ -58,9 +61,10 @@ class SocketManager
         return sendQueue.Enqueue(data, size);
     }
 
-    /*
-     * summery : 수신 요청시 수신 큐에서 바로 추출. 매 Dispatch 마다 실제 수신 후 큐에 저장 
-     */
+    
+    /// <summary>
+    /// 수신 요청시 수신 큐에서 바로 추출. 매 Dispatch 마다 실제 수신 후 큐에 저장 
+    /// </summary>
     public int Receive(ref byte[] buffer, int size)
     {
         if (receiveQueue == null)
@@ -71,10 +75,10 @@ class SocketManager
         return receiveQueue.Dequeue(ref buffer, size);
     }
 
+    /// <summary>
+    /// 소켓 종료시, 실제로 소켓을 닫고 이벤트를 통지함.
+    /// </summary>
 
-    /*
-     * summery : 소켓 종료시, 실제로 소켓을 닫고 이벤트를 통지함.
-     */
     public void Disconnect()
     {
         isConnected = false;
@@ -94,12 +98,13 @@ class SocketManager
         }
     }
 
-
+    /// <summary>
+    /// Dispatch용 스레드 생성.
+    /// </summary>
     private bool LaunchDispatchThread()
     {
         try
         {
-            // Dispatch용 스레드 생성.
             dispatchThreadLoop = true;
             dispatchThread = new Thread(new ThreadStart(Dispatch));
             dispatchThread.Start();
@@ -112,9 +117,10 @@ class SocketManager
         return true;
     }
 
-    /*
-     * summery : Dispatch Thread 동작. 50ms마다 수신과 송신 작업 반복. 
-     */
+    /// <summary>
+    /// Dispatch Thread 동작. 50ms마다 수신과 송신 작업 반복. 
+    /// </summary>
+
     public void Dispatch()
     {
         while (dispatchThreadLoop)
@@ -129,14 +135,14 @@ class SocketManager
         }
     }
 
-    /*
-     * summery : 실제 송신 동작. 큐에서 메시지를 꺼내서 송신 
-     */
+    /// <summary>
+    /// 실제 송신 처리 절차. 큐에서 메시지를 꺼내서 송신 
+    /// </summary>
+
     void DispatchSend()
     {
         try
         {
-            // 송신처리.
             if (socket.Poll(0, SelectMode.SelectWrite))
             {
                 byte[] buffer = new byte[BUFFERSIZE];
@@ -155,12 +161,12 @@ class SocketManager
         }
     }
 
-    /*
-     * summery : 실제 수신 절차. 메시지를 수신하여 큐에 저장.
-     */
+    /// <summary>
+    /// 실제 수신 처리 절차. 메시지를 수신하여 큐에 저장.
+    /// </summary>
+
     void DispatchReceive()
     {
-        // 수신처리.
         try
         {
             while (socket.Poll(0, SelectMode.SelectRead))
@@ -177,18 +183,18 @@ class SocketManager
         }
     }
 
-    /*
-     * summery : 이벤트 헨들러 델리게이트 추가.
-     */
+    /// <summary>
+    /// 이벤트 헨들러 델리게이트 추가.
+    /// </summary>
+
     public void RegisterEventHandler(EventHandler handler)
     {
         this.handler += handler;
     }
 
-
-    /*
-     * summery : 이벤트 헨들러 델리게이트 제거
-     */
+    /// <summary>
+    /// 이벤트 헨들러 델리게이트 제거
+    /// </summary>
     public void UnregisterEventHandler(EventHandler handler)
     {
         this.handler -= handler;

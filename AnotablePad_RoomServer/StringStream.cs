@@ -2,6 +2,10 @@
 using System.IO;
 using System.Text;
 
+/// <summary>
+/// Named Pipe에 사용되는 String Stream을 정의하는 부분
+/// MS DOC에 수록된 내용이다.
+/// </summary>
 public class StreamString
 {
     private Stream ioStream;

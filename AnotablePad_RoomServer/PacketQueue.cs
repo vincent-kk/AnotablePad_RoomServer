@@ -17,14 +17,15 @@ public class PacketQueue
     private int _offset = 0;
 
 
-    // 
+    /// <summary>
+    ///  SocketManager에서 사용하는 Message Queue.
+    /// </summary>
     public PacketQueue()
     {
         _streamBuffer = new MemoryStream();
         _offsetList = new List<PacketInfo>();
     }
 
-    // 
     public int Enqueue(byte[] data, int size)
     {
         PacketInfo info = new PacketInfo();
